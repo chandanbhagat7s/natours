@@ -1,0 +1,29 @@
+{
+    "todohighlight.defaultStyle": {},
+    "todohighlight.exclude": [
+        "**/node_modules/**",
+        "**/bower_components/**",
+        "**/dist/**",
+        "**/build/**",
+        "**/.vscode/**",
+        "**/.github/**",
+        "**/_output/**",
+        "**/*.min.*",
+        "**/*.map",
+        "**/.next/**"
+    ],
+    "todohighlight.keywords": [
+        "point",
+        "about",
+        "need",
+        "removed",
+        "like",
+        "done",
+        "basic",
+        "advanced",
+        "important",
+        "necessary",
+        "whyy",
+        "starr"
+    ]
+}

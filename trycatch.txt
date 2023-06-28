@@ -1,0 +1,313 @@
+
+exports.getTour = async (req, res) => {
+    try {
+        // removed and created a class of apiFeature
+        /*
+        
+                // using SJSON format important status
+                // const allTour = await Tour.find()  // will return the array of document okk
+        
+                // point  trying with query string filter // need object 
+                // what is query : object of the parameter passed after ' ?' is the query string
+                // 127.0.0.1:3000/api/v1/tours?difficulty=easy&page=2    { difficulty: 'easy', page: '2' }
+                // const allTour = await Tour.find(req.query);
+                // find look like db.collection.find({ age: { $gt: 21 } }); 
+                // await keyworks resolves the query and bring the output to defined variable okk 
+                console.log(req.query);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+                // removing other paramerter 
+                // const queryobj = { ...req.query }
+                // const rkey = ['page', 'limit', 'sort', 'fields']
+                // rkey.forEach((el) => delete queryobj[el])
+        
+        
+                // // advance filtering for greter and lesser operaters 
+                // // req.query string is like 127.0.0.1:3000/api/v1/tours?price[lte]=2000  object  is like {price:{lte:2000}} need {price : {$lte:2000}}
+                // console.log(queryobj);
+                // let querystr = JSON.stringify(queryobj)
+                // querystr = querystr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`)
+                // let query = Tour.find(JSON.parse(querystr))
+        
+                //removed await keyword ffor multiple query sring functionality and resolving at the end 
+        
+                //point sort need string and object even (your choice)
+                // if (req.query.sort) {
+                //     // for multiple sorting (handling tie)
+                //     const sortquery = req.query.sort.split(',').join(' ')
+                //     query = query.sort(sortquery)
+                // } else {
+                //     query = query.sort('createAt')
+                // }
+        
+                //point limiting 
+                // if (req.query.fields) {
+                //     const limquery = req.query.fields.split(',').join(' ')
+                //     query = query.select(limquery) // selcect for only showing the field as provided 
+                // } else {
+                //     query = query.select('-__v') //- excluding 
+                // }
+        
+                //point limiting and pagination 
+        
+                // const page = req.query.page * 1;
+                // const limit = req.query.limit * 1;
+                // const skip = (page - 1) * limit;
+        
+        
+                // query = query.skip(skip).limit(limit);
+        
+                // if (req.query.page) {
+                //     const totaldoc = await Tour.countDocuments();
+                //     if (skip >= totaldoc) {
+                //         throw new Error('no more resources')
+                //     }
+                // }
+        
+        
+        
+        
+                // executing query
+                const allTour = await query;
+        */
+
+        const apidata = new apiFeature(Tour.find(), req.query).filter().sorte().limiting().pagination();
+
+        const allTour = await apidata.query;
+
+        res.status(200).json({
+            status: "success",
+            totalresult: allTour.length,
+            data: {
+                tour: allTour
+            }
+
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: "fail",
+            massage: "internal server error"
+
+
+        })
+    }
+}
+exports.createTour = async (req, res) => {
+    try {
+        console.log(req.body); // adding middleware app.use(express.json())
+        /*whyy The req.body property is undefined by default in Express because it does not automatically parse the request body. 
+    
+        This is because the request body can be very large, and parsing it can be a performance bottleneck. Instead, Express relies on middleware to parse the request body */
+
+        // const newTour=new Tour({});  newtour.save().then().catch()
+
+        const newTour = await Tour.create(req.body)
+
+        res.status(201).json({
+            status: "success",
+            data: {
+                tour: newTour
+            }
+        })
+    } catch (error) {
+        res.status(404).json({
+            status: "fail",
+            massage: error
+        })
+    }
+
+
+}
+exports.getTourById = async (req, res) => {
+    try {
+        console.log(req.params);
+        // we neeed to find the tour in json file (currently)
+        const tours = await Tour.findById(req.params.id); // same as Tour.findOne({_id:req.params.id})
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                tours
+            }
+
+        })
+    } catch (error) {
+        res.status(404).json({
+            status: "fail",
+            massage: "invalid id"
+
+        })
+    }
+}
+
+exports.updateTourById = async (req, res) => {
+    try {
+        const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+            runValidators: true, // to run the validater again before updating
+            new: false    // to set the incoming data ok 
+        })
+        res.status(200).json({
+            status: "success",
+            data: {
+                tour
+            }
+
+        })
+    } catch (error) {
+        res.status(404).json({
+            status: "fail",
+            massage: "invalid id "
+        })
+    }
+
+
+
+}
+exports.deleteTourById = async (req, res) => {
+    try {
+        const tour = await Tour.findByIdAndDelete(req.params.id)
+        res.status(200).json({
+            status: "success",
+            data: null
+
+        })
+    } catch (error) {
+        res.status(404).json({
+            status: "fail",
+            massage: "invalid id "
+        })
+    }
+
+}
+
+
+// aggrigation pipeline  
+exports.stats = async (req, res) => {
+    try {
+        const stat = await Tour.aggregate([
+            {
+                $match: {
+                    duration: { $gte: 3 }
+                }
+
+            },
+            {
+                $group: {
+                    _id: '$difficulty',
+                    avgprice: { $avg: '$price' },
+                    avgrating: { $avg: '$rating' },
+                    maxprice: { $max: '$price' },
+                    minprice: { $min: '$price' },
+                    totaltour: { $sum: 1 },
+                    totalprice: { $sum: '$price' }
+
+                }
+            },//important we can add furter more // and from hear we cannot access tour daata 
+            // the data it has is of group okk 
+            {
+                $sort: {
+                    minprice: 1
+                }
+            }
+        ])
+        res.status(200).json({
+            status: "success",
+            data: {
+                stat
+            }
+        })
+    } catch (error) {
+        res.status(404).json({
+            status: "fail",
+            massage: "invalid id "
+        })
+    }
+
+
+}
+
+exports.busymonth = async (req, res) => {
+
+    try {
+        const year = req.params.year;
+
+        const plan = await Tour.aggregate([
+            {
+                /* using unwind to separe it out (it is assigned for single this many )=>(what it will do it will assign sepratly one for every other )
+              "startDates": [
+        "2021-04-25T09:00:00.000Z",
+        "2021-07-20T09:00:00.000Z",
+        "2021-10-05T09:00:00.000Z"
+      ]  */
+                $unwind: '$startDates'
+            },
+            // now we will use match for year range 2021 and 2022
+            {
+                $match: {
+                    startDates: {
+                        $gte: new Date(`${year}-01-01`),
+                        $lte: new Date(`${year}-12-01`)
+                    }
+                }
+            },
+            // now we will limit the field 
+            {
+                $group: {
+                    _id: {
+                        $month: '$startDates'
+                    },
+                    tours: {
+                        $push: '$name'
+                    },
+                    numberoftourstart: {
+                        $sum: 1
+                    }
+                }
+            }, // now we will add the fields month 
+            {
+                $addFields: {
+                    month: '$_id'
+                }
+            },// now we will remove the id 
+            {
+                $project: {
+                    _id: 0
+                }
+            },// we can limit the number of result 
+            // {
+            //     $limit: 3
+            // } // we can sort even 
+            {
+                $sort: {
+                    month: -1
+                }
+            }
+
+        ])
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                plan
+            }
+        })
+
+    } catch (error) {
+        res.status(404).json({
+            status: "fail",
+            massage: "invalid id "
+        })
+    }
+
+
+
+
+
+}

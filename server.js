@@ -29,6 +29,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/newpratice", {
         console.log("database connected");
     })
     .catch(err => {
+        // hear you handled the error but suppose in the big applicatuion it is difficult to handle the promise which is rejected 
         console.log("Could not connect", err);
     });
 
@@ -73,6 +74,43 @@ console.log(err);
 })*/
 
 const port = process.env.PORT || 8000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log("server started at port ", port);
 })
+
+// now see if somthing happens or client is not able to connect to the database then 
+// so will close the server and end the task 
+// eg.. database connection loss
+process.on('unhandledRejection', err => {
+    console.log(err.name, err.massage);
+    console.log('unhandled rejection 💥shutting down');
+    // now we will close the server 
+    server.close(() => {
+        //'success' code 0
+        // code 1 for unhandled rejection 
+        process.exit(1)
+    })
+})
+// do not relay on this only some more error are also going to occur then try to handle it 
+// this handlig is for somepoint we do not know what error it is going to cause okk 
+
+
+// now for some variable which we did not defined and ried to access it 
+process.on('uncaughtException', err => {
+    console.log(err.name, err.massage);
+    console.log('unhandled rejection 💥shutting down');
+    // now we will close the server 
+    server.close(() => {
+        //'success' code 0
+        // code 1 for unhandled rejection 
+        process.exit(1)
+        // it is restarted by the server on which we host our application 
+    })
+})
+
+
+
+
+
+
+

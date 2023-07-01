@@ -19,8 +19,10 @@ const userSchema = new mongoose.Schema({
     photo: String,
     password: {
         type: String,
-        required: [true, 'Please confurm your password'],
-        minlength: 8
+        required: [true, 'Please enter your password'],
+        minlength: 8,
+        // to hide password to be not selected 
+        select: false
     },
     Cnfpassword: {
         type: String,
@@ -47,6 +49,12 @@ userSchema.pre('save', async function (next) {
 
 
 })
+
+// we will create an instance for checking the inputed password (basicly comparision hashpassword which is in DB with inputed) by using bcript
+// this instance will be available with the document okk 
+userSchema.methods.correctPass = async function (inputedpass, acctualpassinhash) {
+    return await bcrypt.compare(inputedpass, acctualpassinhash)
+}
 
 const User = mongoose.model('User', userSchema)
 

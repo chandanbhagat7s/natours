@@ -1,12 +1,24 @@
 
+const runAsync = require('./../util/runAsync')
+const User = require('./../models/User');
+
+exports.getUser = runAsync(async (req, res, next) => {
+
+    // we will create 
 
 
-exports.getUser = (req, res) => {
-    res.status(500).json({
-        success: "fail",
-        massage: "yet to be implemented "
+
+
+    const alluser = await User.find();
+
+    res.status(200).json({
+        status: "success",
+        data: {
+            tour: alluser
+        }
+
     })
-}
+})
 exports.createUser = (req, res) => {
     res.status(500).json({
         success: "fail",

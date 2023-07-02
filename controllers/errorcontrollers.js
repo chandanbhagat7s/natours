@@ -23,6 +23,17 @@ const handlevalidationError = (err) => {
     return new appError(massage, 400)
 }
 
+// handling jwt error 
+const jwstokenerror = () => {
+    return new appError('invalid token ,need to login again', 400)
+}
+
+// if token expires
+const jwttokenexp = () => {
+    return new appError('token expire need to login again', 400)
+}
+
+
 // for dev 
 const indevelopment = (err, res) => {
     const statuscode = err.statusCode || 500;
@@ -89,6 +100,14 @@ module.exports = (err, req, res, next) => {
         // now we will try for validation error 
         if (err.name === 'ValidationError') {
             error = handlevalidationError(error)
+
+        }
+        if (err.name === 'JsonWebTokenError') {
+            error = jwstokenerror(error)
+
+        }
+        if (err.name === 'TokenExpiredError') {
+            error = jwttokenexp(error)
 
         }
 

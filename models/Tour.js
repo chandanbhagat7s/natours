@@ -134,7 +134,7 @@ tourSchema.pre(/^find/, function (next) {
 tourSchema.pre('aggregate', function (next) {
     // for hiding secrate tour we will add one more stage 
     this.pipeline().unshift({ $match: { secrate: { $ne: true } } })
-    console.log(this.pipeline());
+    // console.log(this.pipeline());
     next()
 })
 

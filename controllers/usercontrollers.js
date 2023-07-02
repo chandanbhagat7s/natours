@@ -1,13 +1,17 @@
 
+
+
 const runAsync = require('./../util/runAsync')
 const User = require('./../models/User');
 
+
+
+
+
+
+
+
 exports.getUser = runAsync(async (req, res, next) => {
-
-    // we will create 
-
-
-
 
     const alluser = await User.find();
 

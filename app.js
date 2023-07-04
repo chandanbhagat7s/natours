@@ -2,6 +2,14 @@
 const express = require('express');
 const morgan = require('morgan');
 
+const rateLimit = require('express-rate-limit')
+
+const xss = require('xss-clean');
+const hpp = require('hpp');
+const mongosanitize = require('express-mongo-sanitize');
+
+const helmet = require('helmet');
+
 //bringing error controller
 const globalerror = require('./controllers/errorcontrollers');
 // bringing error class 
@@ -12,8 +20,22 @@ const userRoute = require('./Routes/userroutes')
 const tourRoute = require('./Routes/tourroutes')
 
 
+
+
 // bringing all the function access to app variable 
 const app = express();
+
+
+
+
+
+
+//  helmate middleware : used for setting the headers 
+app.use(helmet())
+
+
+
+
 // we will learn to server static file ok 
 app.use(express.static(`${__dirname}/img`))
 
@@ -22,13 +44,51 @@ if (process.env.NODE_ENV === 'development') {
 
 }
 
-app.use(express.json())//work as middleware
+// limiting the requses body
+app.use(express.json({ limit: '10kb' }))//work as middleware
+
+// if in body specific query is entred then we get the user base on that so we need to use sanatization as middleware
+app.use(mongosanitize())
+// this middleware filer out all the operater and . okk 
+
+// this middleware filter out all the html code if present then it will be revert
+app.use(xss())
+
+// now we are going to use hpp :http parameter pollution 
+// while query their is the request by dublicate field like sort=duration&sort=price which create problem 
+// and problem is created by attackers  eg: 
+//{{URL}}/api/v1/tours?sort=price&sort=duration
+// then which is last on base of that request is fulllfiled
+
+// {{URL}}/api/v1/tours?duration=3&duration=9 for this we want both
+// then we need to define the whitelist which will contains the list for dublication allowence
+app.use(hpp({
+    whitelist: ['duration', 'difficulty', 'price', 'maxGroupSize', 'ratngsAvargage', 'ratingsQuantity']
+}))
+
 
 // point creating the miidleware basic  run in the order it is defined before and after the specific routes okk 
 app.use((req, res, next) => {
     console.log("hello from the middleware");
+    // console.log(req.url);
+    // if (req.url == '/api/v1/user/login') {
+    //     console.log(req.url);
+
+
+    // }
     next()
 })
+
+
+//  point : implementing ratelimiter 
+// npm i express -rate-limit
+const ratelimiter = rateLimit({
+    max: 20, // no of maximum request 
+    windowMs: 60 * 60 * 1000,  // reneving in timelimit
+    message: "to many request from your ip , please try again after a hour "
+})
+app.use('/api', ratelimiter);
+
 
 
 //point how to do get and post request basic
@@ -239,6 +299,7 @@ app.all('*', (req, res, next) => {
 // globalerror is the error middleware 
 // first we create an error (by error object .. or...)then this error middleware will be called 
 app.use(globalerror)
+
 
 module.exports = app;
 

@@ -46,7 +46,11 @@ const userSchema = new mongoose.Schema({
     },
     // for changed password
     passwordResetToken: String,
-    passwordResetTokenExpiresIn: Date
+    passwordResetTokenExpiresIn: Date,
+    active: {
+        type: Boolean,
+        default: true
+    }
 })
 
 // now we are going to encrypt the password 
@@ -88,6 +92,30 @@ userSchema.pre('save', function (next) {
     this.changedPasswodTime = Date.now() - 1000;
     next()
 })
+
+
+
+
+// we have active : false so we do not want it to fetch 
+userSchema.pre(/^find/, function (next) {
+    // console.log(this.options.disableMiddlewares);  we set the  property okk to provide login access to deactive user
+    if (this.options.disableMiddlewares) {
+
+        next();
+    }
+    else {
+        this.find({ active: { $ne: false } });
+        next();
+    }
+
+});
+//     // this poins to query object 
+
+//     this.find({ active: { $ne: false } });
+//     next()
+// })
+
+
 
 
 

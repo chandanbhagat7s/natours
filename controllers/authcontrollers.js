@@ -1,5 +1,6 @@
 // creating for authication purpose 
-
+const app = require('./../app')
+const express = require('express');
 //bring apperror
 const appError = require('./../util/appError')
 const { promisify } = require('util');
@@ -7,6 +8,8 @@ const { promisify } = require('util');
 const crypto = require('crypto');
 // importing email
 const sendEmail = require('./../util/email')
+const url = require('url');
+
 
 
 
@@ -16,6 +19,36 @@ const User = require('./../models/User');
 const runAsync = require('./../util/runAsync')
 //for token : autenication token to access protected data from the route , as user do not provid his usname and pass.. and we do not want that server will remenber the state so , by token it will be matched okk and provide acess 
 const jwt = require('jsonwebtoken')
+
+// function for sending token and response 
+const sendTokenResponse = (user, statuscode, res) => {
+    const token = createToken(user._id,)
+    // we are going to send token in the form of cookies that we can be safe from cross-side scripting attack
+
+    let options = {
+        expires: new Date(Date.now() + process.env.EXP_COOKIE * 24 * 60 * 60 * 1000),
+        secure: true, // only for https
+        httpOnly: true
+    }
+    // making optins of secure to false 
+    if (process.env.NODE_ENV == 'development') {
+        options.secure = false
+
+    }
+
+
+    res.cookie('jwt', token, options)
+
+    // acctually user password is going in the res
+    user.password = false;
+
+
+    res.status(statuscode).json({
+        status: 'success',
+        token: token, // sending token for auto login if signup
+        user: { user }
+    })
+}
 
 
 
@@ -94,19 +127,21 @@ exports.signup = runAsync(async (req, res, next) => {
         email: req.body.email,
         password: req.body.password,
         photo: req.body.photo || '',
-        changedPasswodTime: req.body.changedPasswodTime,
         role: req.body.role
 
     })
-    const token = createToken(newUser._id,)
+    sendTokenResponse(newUser, 201, res)
+    // const token = createToken(newUser._id,)
 
 
-    res.status(200).json({
-        status: 'success',
-        token: token, // sending token for auto login if signup
-        user: { newUser }
-    })
+    // res.status(201).json({
+    //     status: 'success',
+    //     token: token, // sending token for auto login if signup
+    //     user: { newUser }
+    // })
 });
+
+
 
 
 // now for login 
@@ -117,24 +152,40 @@ exports.login = runAsync(async (req, res, next) => {
     if (!email || !password) {
         return next(new appError('please enter email and password', 404))
     }
+
+    let options = {
+        disableMiddlewares: true, // can be checked in middleware with this.options.disableMiddlewares
+    };
+
     // bringign out the user(all data) with password for comparison 
-    const userpass = await User.findOne({ email }).select('+password')
+
+    let userpass = await User.findOne({ email }).select('+password').setOptions(options)
     //commented so if failed to know the email then this fun.. will create problem..
     // const cmpred = await User.correctPass(password, userpass) 
+    console.log(userpass.email);
 
 
     if (!userpass || !(await userpass.correctPass(password, userpass.password))) {//401 : unauthorized user
         return next(new appError('please enter correct email or password', 401))
+
     }
+    await userpass.save()
+    // console.log(userpass.active);
+    // dont try to do it in middleware (my mistake )
+    // can be done in methods.. 
+    userpass.active = true;
+    // console.log(userpass.active);
 
     // sending token as response because everytime user will not provid uerid or pass.. , user will get access to protected rout by token
     // sending the token 
-    const token = createToken(userpass._id)
+    sendTokenResponse(userpass, 200, res)
 
-    res.status(200).json({
-        status: 'success',
-        token: token
-    })
+    // const token = createToken(userpass._id)
+
+    // res.status(200).json({
+    //     status: 'success',
+    //     token: token
+    // })
 
 
 
@@ -234,12 +285,14 @@ exports.resetPassword = runAsync(async (req, res, next) => {
     await user.save()
 
     // now sending the token for user to be logind
-    const token = createToken(user._id)
+    sendTokenResponse(user, 200, res)
 
-    res.status(200).json({
-        status: 'success',
-        token: token
-    })
+    // const token = createToken(user._id)
+
+    // res.status(200).json({
+    //     status: 'success',
+    //     token: token
+    // })
 
 
 
@@ -249,9 +302,9 @@ exports.updatePassword = runAsync(async (req, res, next) => {
     // for updating pass.. the user need to be logined
     // we need to get the user base on token we have
     const user = await User.findById(req.user.id).select('+password')
-    console.log(user);
+    // console.log(user);
 
-    if (!user, !(await user.correctPass(req.body.oldPassword, user.password))) {
+    if (!user || !(await user.correctPass(req.body.oldPassword, user.password))) {
         return next(new appError('login again', 403))
     }
     // now we need to take the passord from the body and update it 
@@ -263,12 +316,14 @@ exports.updatePassword = runAsync(async (req, res, next) => {
     user.Cnfpassword = req.body.Cnfpassword;
 
     await user.save();
-    const token = createToken(user._id)
+    sendTokenResponse(user, 200, res)
 
-    res.status(200).json({
-        status: 'success',
-        token: token
-    })
+    // const token = createToken(user._id)
+
+    // res.status(200).json({
+    //     status: 'success',
+    //     token: token
+    // })
 
 
 })

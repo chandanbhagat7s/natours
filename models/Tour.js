@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const User = require('./User');
+const { promises } = require('nodemailer/lib/xoauth2');
 
 const tourSchema = new mongoose.Schema({
     // name:String,
@@ -81,9 +83,52 @@ const tourSchema = new mongoose.Schema({
 
     // advanced define new field for secrate tour
     secrate: {
+        // this is schema type option
         type: Boolean,
         default: false
-    }
+    },
+    startLocation: {
+        // GeoJson : the data type used by mongoose inorder to define geospecial data
+        // hear we will define embedded object and inside this object we can define coupl couple of props..
+        // inOrder to define geoJson we need two props.. type and coordinate 
+        type: {
+            type: String,
+            default: "Point",
+            enum: ['Point']
+        },
+
+        coordinates: [Number],  // array of [longitude , latitude]
+        address: String,
+        discription: String
+    },
+    // to embedded the documnet we need to creata the array only and inside it need to define the object which will create documnet inside the documnet
+    locations: [
+        {
+            type: {
+                type: String,
+                default: "Point",
+                enum: ['Point']
+            },
+
+            coordinates: [Number],
+            address: String,
+            discription: String,
+            day: Number
+        }
+    ],
+    // we are going to embdded(for pratice) user document of role tour-guide into the  tour : we will do this into the pre:save middleware
+    // we Need to embeed data then only if their will be no updates spacially 
+    // think About if guide Updates the role then ......... changes to be Done in tours also 
+    // guides: Array
+
+    // now we will refrence the data 
+    guides: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: 'User'
+        }
+    ]
+
 
 },
     {
@@ -95,6 +140,36 @@ const tourSchema = new mongoose.Schema({
 tourSchema.virtual('durationInWeek').get(function () {
     return this.duration / 7;
 })// we need to define options in the schema 
+
+// now populating virtual field : to keep the record of review in the tours 
+// as we have pparent refrencing , then the tour do not have any way to know About children so we will populate the field 
+tourSchema.virtual('reviews', {
+    ref: 'Reviews',
+    foreignField: 'ofTour',
+    localField: '_id'
+
+})
+
+// point : embedding documnet 
+/*
+// embedding user docuement into tours only of guide 
+tourSchema.pre('save', async function (next) {
+    // updating the guide : we have id (only of the user with role guide )of user (availabe as array ) from id we will embedd document of user into the tour
+    // need to await by ffetching from id , mark the function as async
+    const guidePromise = this.guides.map(async id => await User.findById(id))
+    // now guidePromise is the promise array and we need to resolve and save to the field of tours 
+    this.guides = await Promise.all(guidePromise);
+    next();
+
+})
+
+*/
+
+// point : refrencing docuement
+
+
+
+
 
 /*//about documnet middleware : only runs for save and create 
 tourSchema.pre('save', function (next) {
@@ -127,6 +202,15 @@ tourSchema.pre(/^find/, function (next) {
 
     next()
 })
+
+
+tourSchema.pre(/^find/, function (next) {
+    // we are populating in the middleware just it will make the second query and give us 
+    this.populate({ path: 'guides', select: '-__v' })
+    next()
+})
+
+
 // })
 // about aggrigation middleware
 // what is happning see.. secrate tour is being added into the aggragition .. functionality 

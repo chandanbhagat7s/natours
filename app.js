@@ -18,6 +18,7 @@ const appError = require('./util/appError')
 //bringing userroute
 const userRoute = require('./Routes/userroutes')
 const tourRoute = require('./Routes/tourroutes')
+const reviewRoute = require('./Routes/reviewroute')
 
 
 
@@ -69,7 +70,7 @@ app.use(hpp({
 
 // point creating the miidleware basic  run in the order it is defined before and after the specific routes okk 
 app.use((req, res, next) => {
-    console.log("hello from the middleware");
+    // console.log("hello from the middleware");
     // console.log(req.url);
     // if (req.url == '/api/v1/user/login') {
     //     console.log(req.url);
@@ -273,6 +274,7 @@ app.use('/api/v1/user', userRouter) */
 
 app.use('/api/v1/tours', tourRoute)
 app.use('/api/v1/user', userRoute)
+app.use('/api/v1/review', reviewRoute)
 
 // if any route is avaialble till this point it means it do not belongs to our routes so we need to handle it even okk 
 app.all('*', (req, res, next) => {

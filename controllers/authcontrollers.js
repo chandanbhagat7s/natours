@@ -199,7 +199,7 @@ exports.getaccess = (...roles) => {
         console.log(roles.includes(req.user.role));
 
         if (!roles.includes(req.user.role)) {
-            return next(new appError('u do not have access to delete tours', 403))
+            return next(new appError('u do not access', 403))
         }
         next()
 

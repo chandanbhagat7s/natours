@@ -134,6 +134,10 @@ exports.createTour = runAsync(async (req, res, next) => {
     This is because the request body can be very large, and parsing it can be a performance bottleneck. Instead, Express relies on middleware to parse the request body */
 
     // const newTour=new Tour({});  newtour.save().then().catch()
+    /*
+    what is populate tour : the another request made by mongoose autoamticaly where the refrence 
+    is stord in form of id , it will bring all the information of that populated from the path specifed 
+    */
 
     const newTour = await Tour.create(req.body);
 
@@ -151,7 +155,7 @@ exports.getTourById = runAsync(async (req, res, next) => {
 
     console.log(req.params);
     // we neeed to find the tour in json file (currently)
-    const tours = await Tour.findById(req.params.id); // same as Tour.findOne({_id:req.params.id})
+    const tours = await Tour.findById(req.params.id).populate('reviews') // same as Tour.findOne({_id:req.params.id})
 
     //necessary
     if (!tours) {
@@ -320,9 +324,20 @@ exports.busymonth = runAsync(async (req, res, next) => {
     })
 
 
-
-
-
-
-
 })
+
+// we want that user should post the review
+//  tours/:tourID/review
+//  tours/:tourID/review
+
+
+
+
+
+
+
+
+
+
+
+

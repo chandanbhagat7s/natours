@@ -1,6 +1,7 @@
 // bringing hear the model for crud routes 
 
 const Tour = require('./../models/Tour');
+const factory = require('./factory')
 
 // const fs = require('fs');
 // const Tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours.json`))
@@ -126,31 +127,35 @@ exports.getTour = runAsync(async (req, res, next) => {
 
 
 
-exports.createTour = runAsync(async (req, res, next) => {
+exports.createTour = factory.createOne(Tour)
+
+
+/* runAsync(async (req, res, next) => {
     //removed try catch 
     //   console.log(req.body); // adding middleware app.use(express.json())
     /*whyy The req.body property is undefined by default in Express because it does not automatically parse the request body. 
  
     This is because the request body can be very large, and parsing it can be a performance bottleneck. Instead, Express relies on middleware to parse the request body */
 
-    // const newTour=new Tour({});  newtour.save().then().catch()
-    /*
-    what is populate tour : the another request made by mongoose autoamticaly where the refrence 
-    is stord in form of id , it will bring all the information of that populated from the path specifed 
-    */
+// const newTour=new Tour({});  newtour.save().then().catch()
+/*
+what is populate tour : the another request made by mongoose autoamticaly where the refrence 
+is stord in form of id , it will bring all the information of that populated from the path specifed 
+ 
 
-    const newTour = await Tour.create(req.body);
+const newTour = await Tour.create(req.body);
 
-    res.status(201).json({
-        status: "success",
-        data: {
-            tour: newTour
-        }
-    });
+res.status(201).json({
+    status: "success",
+    data: {
+        tour: newTour
+    }
+});
 
 
 
-})
+}) */
+
 exports.getTourById = runAsync(async (req, res, next) => {
 
     console.log(req.params);
@@ -171,7 +176,11 @@ exports.getTourById = runAsync(async (req, res, next) => {
 
 })
 
-exports.updateTourById = runAsync(async (req, res, next) => {
+exports.updateTourById = factory.updateOne(Tour)
+
+
+/*
+runAsync(async (req, res, next) => {
 
     const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
         runValidators: true, // to run the validater again before updating
@@ -196,9 +205,12 @@ exports.updateTourById = runAsync(async (req, res, next) => {
 
 
 })
+*/
 
+exports.deleteTourById = factory.deleteOne(Tour)
 
-exports.deleteTourById = runAsync(async (req, res, next) => {
+/*
+runAsync(async (req, res, next) => {
 
     const tour = await Tour.findByIdAndDelete(req.params.id)
     //necessary : if id is not present :like : we get the tour as null if invalid id is found 
@@ -214,7 +226,9 @@ exports.deleteTourById = runAsync(async (req, res, next) => {
     })
 
 
-})
+}) 
+*/
+
 
 
 // aggrigation pipeline  

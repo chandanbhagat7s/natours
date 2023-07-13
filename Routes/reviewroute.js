@@ -6,9 +6,13 @@ const auth = require('./../controllers/authcontrollers');
 const router = express.Router({ mergeParams: true });
 
 
+router.use(auth.getVerified)
+router.route('/').get(revcontroller.getAllRev).post(auth.getaccess('user'), revcontroller.extINFO, revcontroller.createReview)
 
-router.route('/').get(revcontroller.getAllRev).post(auth.getVerified, auth.getaccess('user'), revcontroller.createReview)
 
+router.use(auth.getaccess('user'))
+
+router.route('/:id').delete(revcontroller.deleteReview).patch(revcontroller.updateReview)
 
 
 

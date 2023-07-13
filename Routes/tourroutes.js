@@ -17,6 +17,7 @@ router.route('/stats').get(tourroutes.stats)
 router.route('/topcheaptours').get(tourroutes.aliasroute, tourroutes.getTour)
 router.route('/busy/:year').get(tourroutes.busymonth);
 
+router.use(authroutes.getaccess('admin'))
 router.route('/').get(tourroutes.getTour).post(tourroutes.createTour)
 router.route('/:id').get(tourroutes.getTourById).patch(tourroutes.updateTourById).delete(authroutes.getVerified, authroutes.getaccess('admin', 'head'), tourroutes.deleteTourById)
 

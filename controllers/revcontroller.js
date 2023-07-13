@@ -2,27 +2,37 @@
 
 const runAsync = require('./../util/runAsync');
 const appError = require('./../util/appError');
-const Reviews = require('./../models/Review')
+const Reviews = require('./../models/Review');
+const factory = require('./factory')
 
 // const packageName = require('./../util/');
 
-exports.createReview = runAsync(async (req, res, next) => {
-    // for nested route : 
+
+exports.extINFO = (req, res, next) => {
     if (!req.body.byUser) {
         req.body.byUser = req.user._id
     }
     if (!req.body.ofTour) {
         req.body.ofTour = req.params.tourID
     }
+    next()
+}
 
 
+exports.createReview = factory.createOne(Reviews)
+
+/*runAsync(async (req, res, next) => {
+    // for nested route : 
+  
+ 
+ 
     const rev = await Reviews.create({
         review: req.body.review,
         byUser: req.body.byUser,
         ofTour: req.body.ofTour,
         ratings: req.body.ratings
     })
-
+ 
     if (!rev) {
         next(new appError('create the review .. to be posted', 404))
     }
@@ -32,9 +42,9 @@ exports.createReview = runAsync(async (req, res, next) => {
             rev
         }
     })
-
-
-})
+ 
+ 
+}) */
 
 
 exports.getAllRev = runAsync(async (req, res, next) => {
@@ -61,6 +71,9 @@ exports.getAllRev = runAsync(async (req, res, next) => {
 
 })
 
+
+exports.deleteReview = factory.deleteOne(Reviews)
+exports.updateReview = factory.updateOne(Reviews)
 
 /**
  exports.updateReviewById = runAsync(async (req, res, next) => {

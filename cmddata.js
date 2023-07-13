@@ -1,8 +1,9 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
 // bringing the model for inserting the data into the database 
-const tour = require('./models/Tour');
 const Tour = require('./models/Tour');
+const Reviews = require('./models/Review');
+const User = require('./models/User');
 
 
 // we will read the data from the file we have and insert into the database
@@ -20,12 +21,17 @@ mongoose.connect("mongodb://127.0.0.1:27017/newpratice", {
     });
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours.json`, 'utf-8'))
+const Users = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/users.json`, 'utf-8'))
+const rev = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/reviews.json`, 'utf-8'))
 
 const insertdata = async () => {
     try {
         await Tour.create(tours)
+        await User.create(Users)
+        await Reviews.create(rev)
         console.log("data inserted sucesfully");
     } catch (err) {
+        console.log(err);
         console.log("data not inserted okk ");
     }
     // to stop the process
@@ -35,6 +41,8 @@ const insertdata = async () => {
 const deletedata = async () => {
     try {
         await Tour.deleteMany()
+        await User.deleteMany()
+        await Reviews.deleteMany()
         console.log("data deleted sucesfully");
     } catch (err) {
         console.log("data not inserted okk ");

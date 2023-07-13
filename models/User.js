@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
     changedPasswodTime: Date,
     role: {
         type: String,
-        enum: ['admin', 'user', 'guest', 'guide'],
+        enum: ['admin', 'user', 'lead-guide', 'guide'],
         default: 'user'
     },
     // for changed password
@@ -54,16 +54,16 @@ const userSchema = new mongoose.Schema({
 })
 
 // now we are going to encrypt the password 
-userSchema.pre('save', async function (next) {
+// userSchema.pre('save', async function (next) {
 
-    if (!this.isModified('password')) return next() // return when user do not change password 
+//     if (!this.isModified('password')) return next() // return when user do not change password 
 
-    this.password = await bcrypt.hash(this.password, 12)
-    // and making confirm pass as undefine
-    this.Cnfpassword = undefined;
+//     this.password = await bcrypt.hash(this.password, 12)
+//     // and making confirm pass as undefine
+//     this.Cnfpassword = undefined;
 
 
-})
+// })
 
 // we will create an instance for checking the inputed password (basicly comparision hashpassword which is in DB with inputed) by using bcript
 // this instance will be available with the document okk 

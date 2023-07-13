@@ -5,7 +5,7 @@ const reviewSchema = new mongoose.Schema({
         type: String,
         required: [true, 'review can not be empty'],
         trim: true,
-        maxlength: [100, ' a tour cannot have character more than 40'],
+        maxlength: [500, ' a tour cannot have character more than 500'],
         minlength: [, ' a tour must have character more than 7 character ']
     },
     ratings: {
@@ -53,6 +53,48 @@ reviewSchema.pre(/^find/, function (next) {
     })
     next()
 })
+
+
+// making it for calculaiting the avrage rating and number of rating , using aggrigation and static method okk on the schema 
+
+
+
+
+
+
+
+
+// maing static method 
+// static method can be called on the models direcly
+
+// whereas instance method is called on schema
+reviewSchema.statics.calcAvgRatingss = async function (tourID) {
+    // this POINTS to the current model 
+    const stats = await this.aggregate([
+        {
+            $match: { tour: tourID }
+        }, {
+            $group: {
+                _id: '$tour',
+                nRating: { $sum: 1 },
+                avgRating: { $avg: "$rating" }
+
+            }
+        }
+    ])
+    console.log(stats);
+
+}
+
+reviewSchema.post('save', function () {
+    // this POINTS to the current document okk 
+    //  as the Reviews variable is not yet defined and we cannot put after the declaration evven it will not work because reviewSchema will not be available 
+    // Reviews.calcAvgRatingss   in this way it do not works 
+    // this.constructor    -> which will POINTS to the model
+    this.constructor.calcAvgRatingss(this.tour)
+})
+
+
 
 
 const Reviews = mongoose.model('Reviews', reviewSchema)

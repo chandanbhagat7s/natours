@@ -5,6 +5,18 @@ const runAsync = require('./../util/runAsync')
 const User = require('./../models/User');
 const appError = require('../util/appError');
 
+const factory = require('./factory');
+const { Model } = require('mongoose');
+
+
+exports.getMe = (req, res, next) => {
+    console.log(req.user);
+    req.params.id = req.user._id;
+
+    next()
+}
+
+
 
 
 
@@ -82,21 +94,6 @@ exports.createUser = (req, res) => {
         massage: "yet to be implemented "
     })
 }
-exports.getUserById = (req, res) => {
-    res.status(500).json({
-        success: "fail",
-        massage: "yet to be implemented "
-    })
-}
-exports.updateUserById = (req, res) => {
-    res.status(500).json({
-        success: "fail",
-        massage: "yet to be implemented "
-    })
-}
-exports.deleteUserById = (req, res) => {
-    res.status(500).json({
-        success: "fail",
-        massage: "yet to be implemented "
-    })
-}
+exports.getUserById = factory.getOne(User)
+exports.updateUserById = factory.updateOne(User)
+exports.deleteUserById = factory.deleteOne(User);

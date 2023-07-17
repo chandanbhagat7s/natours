@@ -345,8 +345,42 @@ exports.busymonth = runAsync(async (req, res, next) => {
 //  tours/:tourID/review
 
 
+// tours-within/:distance/center/:latlng/unit/:unit
+// now the rout for geolocation tour distance from me to start location 
+exports.toursWithin = runAsync(async (req, res) => {
+    const { distance, latlng, unit } = req.params;
+    const [lat, lng] = latlng.split(',');
+
+    const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1
+    console.log(radius);
 
 
+    if (!lat || !lng) {
+        next(
+            new appError('Please provide both latitude and longitude.', 400)
+        )
+    }
+
+    //  now we Need to query of tour 
+
+    const tours = await Tour.find({ startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } } })
+    // we Need to create index for start location okk 
+
+    console.log(distance, latlng, unit);
+    res.status(200).json({
+        status: 'success',
+        totalResult: tours.length,
+        data: {
+            data: tours
+        }
+
+    })
+
+
+
+
+
+})
 
 
 

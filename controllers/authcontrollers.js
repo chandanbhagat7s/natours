@@ -75,7 +75,7 @@ If the signature of the JWT is valid, the verify() method will return the decode
 
     // jwt.verify(token,process.env.SECRET)          we will convert it into promise 
     const decode = await promisify(jwt.verify)(token, process.env.SECRET)
-    console.log(decode);
+    // console.log(decode);
     // we need to handle error JsonWebTokenError  and tokenexpire error
 
 
@@ -194,9 +194,9 @@ exports.login = runAsync(async (req, res, next) => {
 
 exports.getaccess = (...roles) => {
     return (req, res, next) => {
-        console.log(roles);
-        console.log(req.user);
-        console.log(roles.includes(req.user.role));
+        // console.log(roles);
+        // console.log(req.user);
+        // console.log(roles.includes(req.user.role));
 
         if (!roles.includes(req.user.role)) {
             return next(new appError('u do not access', 403))

@@ -10,9 +10,9 @@ router.use(auth.getVerified)
 router.route('/').get(revcontroller.getAllRev).post(auth.getaccess('user'), revcontroller.extINFO, revcontroller.createReview)
 
 
-router.use(auth.getaccess('user'))
+router.use(auth.getVerified, auth.getaccess('user'))
 
-router.route('/:id').delete(revcontroller.deleteReview).patch(revcontroller.updateReview)
+router.route('/:id').get(revcontroller.getrevbyid).delete(revcontroller.deleteReview).patch(revcontroller.updateReview)
 
 
 

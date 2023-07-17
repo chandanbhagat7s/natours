@@ -94,6 +94,8 @@ exports.createUser = (req, res) => {
         massage: "yet to be implemented "
     })
 }
+
+
 exports.getUserById = factory.getOne(User)
 exports.updateUserById = factory.updateOne(User)
 exports.deleteUserById = factory.deleteOne(User);

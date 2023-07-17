@@ -19,6 +19,7 @@ exports.extINFO = (req, res, next) => {
 }
 
 
+
 exports.createReview = factory.createOne(Reviews)
 
 /*runAsync(async (req, res, next) => {
@@ -74,6 +75,8 @@ exports.getAllRev = runAsync(async (req, res, next) => {
 
 exports.deleteReview = factory.deleteOne(Reviews)
 exports.updateReview = factory.updateOne(Reviews)
+
+exports.getrevbyid = factory.getOne(Reviews)
 
 /**
  exports.updateReviewById = runAsync(async (req, res, next) => {

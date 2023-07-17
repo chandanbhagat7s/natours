@@ -167,7 +167,10 @@ tourSchema.pre('save', async function (next) {
 
 // point : refrencing docuement
 
-
+// creating index for startlocation in 2D
+tourSchema.index(
+    { 'startLocation': "2dsphere" }
+)
 
 
 

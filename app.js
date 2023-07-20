@@ -1,4 +1,5 @@
 // using the express module (npm i express)
+const path = require('path')
 const express = require('express');
 const morgan = require('morgan');
 
@@ -19,6 +20,7 @@ const appError = require('./util/appError')
 const userRoute = require('./Routes/userroutes')
 const tourRoute = require('./Routes/tourroutes')
 const reviewRoute = require('./Routes/reviewroute')
+const viewRoute = require('./Routes/viewroutes')
 
 
 
@@ -26,7 +28,13 @@ const reviewRoute = require('./Routes/reviewroute')
 // bringing all the function access to app variable 
 const app = express();
 
+// for pug , for  dynamic web rendering okk 
+app.set("view engine", "pug");
+app.set('views', path.join(__dirname, 'views'))
 
+
+// we will learn to server static file ok 
+app.use(express.static(`${__dirname}/public`))
 
 
 
@@ -37,8 +45,6 @@ app.use(helmet())
 
 
 
-// we will learn to server static file ok 
-app.use(express.static(`${__dirname}/img`))
 
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev')) // using the thirdparty-middleware
@@ -271,7 +277,7 @@ app.use('/api/v1/tours', tourRouter)
 app.use('/api/v1/user', userRouter) */
 
 
-
+app.use('/', viewRoute)
 app.use('/api/v1/tours', tourRoute)
 app.use('/api/v1/user', userRoute)
 app.use('/api/v1/review', reviewRoute)

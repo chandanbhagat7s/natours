@@ -311,3 +311,61 @@ exports.busymonth = async (req, res) => {
 
 
 }
+
+pug
+doctype html 
+html
+    head 
+        title Natours | #{tour}
+        //- to use templete string
+        
+         //- <link rel="stylesheet" href="/css/style.css"/> attribute to be written in the () , we can write html even and leave as it is , it will work
+        link(rel='stylesheet' href='css/style.css')
+        link(rel='shortcut icon'  href='img/favicon.png'  type='image/png' )
+    
+    body
+        //- we accessed the propery which was defined in the route
+        h1= tour 
+        //- now we can use javascript even 
+        h1= user.toUpperCase()
+
+        - const x=9;
+        h2= 2*x
+        p this is some text
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

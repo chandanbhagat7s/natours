@@ -99,7 +99,7 @@ const tourSchema = new mongoose.Schema({
 
         coordinates: [Number],  // array of [longitude , latitude]
         address: String,
-        discription: String
+        description: String
     },
     // to embedded the documnet we need to creata the array only and inside it need to define the object which will create documnet inside the documnet
     locations: [
@@ -172,7 +172,10 @@ tourSchema.index(
     { 'startLocation': "2dsphere" }
 )
 
-
+tourSchema.pre('save', function (next) {
+    this.slug = slugify(this.name, { lower: true });
+    next();
+});
 
 /*//about documnet middleware : only runs for save and create 
 tourSchema.pre('save', function (next) {

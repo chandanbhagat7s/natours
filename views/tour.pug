@@ -1,5 +1,90 @@
 extends base
 
-block content   
-    
+block content 
+    section.section-header 
+        .header__hero
+            .header__hero-overlay &nbsp;
+            img.header__hero-img(src=`/img/tours/${tour.imageCover}`, alt='Tour 5')
+        .heading-box 
+            h1.heading-primary 
+                span= tour.name 
+            .heading-box__group 
+                .heading-box__detail 
+                    svg.heading-box__icon
+                        use(href="/img/icons.svg#icon-clock")
+                    span.heading-box__text=`${tour.duration} days`
+                .heading-box__detail
+                svg.heading-box__icon
+                    use(href="/img/icons.svg#icon-map-pin")
+                span.heading-box__text=`${tour.startLocation.description}`
+    section.section-description
+        .overview-box
+            div 
+                div.overview-box__group
+                    h2.heading-secondary.ma-bt-lg Quic facts
+                    .overview-box__detail 
+                        svg.overview-box__icon 
+                            use(href='/img/icons.svg#icon-calendar')
+                        span.overview-box__label Next date
+                        span.overview-box__text= tour.startDates[1].toLocaleString('en-us',{month : 'long', year :'numeric'})
+                    div.overview-box__detail
+                        svg.overview-box__icon 
+                            use(href='/img/icons.svg#icon-trending-up')
+                        span.overview-box__label Difficulty
+                        span.overview-box__text= tour.difficulty
+                    div.overview-box__detail
+                        svg.overview-box__icon 
+                            use(href='/img/icons.svg#icon-user')
+                        span.overview-box__label Participants
+                        span.overview-box__text= `${tour.maxGroupSize}`
+                    div.overview-box__detail
+                        svg.overview-box__icon 
+                            use(href='/img/icons.svg#icon-star')
+                        span.overview-box__label Rating
+                        span.overview-box__text= tour.rating /5
+
+                div.overview-box__group
+                    h2.heading-secondary.ma-bt-lg Your tour guides
+                    each g in tour.guides 
+                        .overview-box__detail
+                            img(src=`/img/users/${g.photo}` alt='Lead guide').overview-box__img
+                            span.overview-box__label= g.role
+                            span.overview-box__text= g.name
+
+        div.description-box
+            h2.heading-secondary.ma-bt-lg= `About the ${tour.name} tour`
+            p.description__text= tour.description
+
+    section.section-pictures
+        each img,i in tour.images
+            .picture-box
+                img( src=`/img/tours/${img}`, alt='The Park Camper Tour 1' , class=`picture-box__img--${i+1}`).picture-box__img
+
+    section.section-reviews
+        .reviews 
+            each rev in tour.reviews
+                .reviews__card 
+                    .reviews__avatart 
+                        img( src=`/img/users/${rev.byUser.photo}` ,alt=`${rev.byUser.name}`).reviews__avatar-img
+                        h6.reviews__user= rev.byUser.name 
+                    p.reviews__text= rev.review
+                    .reviews__rating
+                        each r in [1,2,3,4,5]
+                            svg(class=`${ rev.rating >= r ?  'reviews__star--active' : 'reviews__star--inactive'  }`).reviews__star
+                                use(href='/img/icons.svg#icon-star')
+
+
+    section.section-cta
+        .cta
+            .cta__img.cta__img--logo
+                img(src='/img/logo-white.png', alt='Natours logo')
+            img.cta__img.cta__img--1(src=`/img/tours/${tour.images[0]}`, alt='')
+            img.cta__img.cta__img--2(src=`/img/tours/${tour.images[1]}`, alt='')
+            .cta__content
+                h2.heading-secondary What are you waiting for?
+                p.cta__text=  `${tour.duration} days. 1 adventure. Infinite memories. Make it yours    today!`
+                button.btn.btn--green.span-all-rows Book tour now!
+                    
+                        
+                    
     

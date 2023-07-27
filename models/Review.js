@@ -9,7 +9,7 @@ const reviewSchema = new mongoose.Schema({
         maxlength: [500, ' a tour cannot have character more than 500'],
         minlength: [2, ' a tour must have character more than 7 character ']
     },
-    ratings: {
+    rating: {
         type: Number,
         min: 1,
         max: 5
@@ -50,7 +50,7 @@ reviewSchema.pre(/^find/, function (next) {
     // })
     // we want to populate only users so we used it for only for users
     this.populate({
-        path: 'byUser', select: 'name'
+        path: 'byUser', select: 'name photo'
     })
     next()
 })

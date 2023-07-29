@@ -59,7 +59,11 @@ exports.getVerified = runAsync(async (req, res, next) => {
     let token;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
         token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies.jwt) {
+        // allowing the access to the protected route if we have jwt cookie
+        token = req.cookies.jwt;
     }
+
     // console.log(token);
     if (!token) {
         return next(new appError('please login to get access', 401))
@@ -106,6 +110,40 @@ If the signature of the JWT is valid, the verify() method will return the decode
 
 })
 
+
+// for render page authentication protection with no error
+exports.isLoggedIn = async (req, res, next) => {
+
+    if (req.cookies.jwt) {
+
+        try {
+            const decode = await promisify(jwt.verify)(req.cookies.jwt, process.env.SECRET)
+
+            const freshUser = await User.findById(decode.id)
+            if (!freshUser) {
+                return next()
+            }
+            // now for if the user change the passwor then we shoud not access
+            // console.log(await freshUser.changedPasswords(decode.iat));
+            if (await freshUser.changedPasswords(decode.iat)) {
+                return next()
+            }
+
+            // future use 
+            // req.user = freshUser
+            res.locals.user = freshUser;
+
+
+            return next();
+        } catch (error) {
+            return next()
+        }
+    }
+
+    next()
+    // This middleware will first get the user data from the database. Then, it will set the req.local.user variable to the user data. Finally, it will call the next() function to continue the request processing.
+
+}
 
 // function for creating the token 
 const createToken = function (id) {
@@ -191,6 +229,18 @@ exports.login = runAsync(async (req, res, next) => {
 
 })
 
+
+// route for logout
+// as it is http only so we cannot manuplate cookie in the browser (means we cannot delete)
+// we cannot manuplate the cookie so we are rewriting the cookie to the difffrent value okk 
+exports.logout = async function (req, res) {
+    res.cookie('jwt', 'u are out! LOGEGDOUT', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    })
+
+    res.status(200).json({ status: 'success' })
+}
 
 exports.getaccess = (...roles) => {
     return (req, res, next) => {

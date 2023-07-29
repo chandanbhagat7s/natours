@@ -1,5 +1,15 @@
 extends base
 
+//- this will append what ever written hear it is written okk (in this it will be appended in base okk )
+//- as we Need all functionaly hear so we are appending it in the tour page only directly from hear okk  
+block append head
+    script(src="https://cdn.maptiler.com/maptiler-sdk-js/v1.1.1/maptiler-sdk.umd.min.js")
+    link(rel="stylesheet" ,href="https://cdn.maptiler.com/maptiler-sdk-js/v1.1.1/maptiler-sdk.css" )
+    //- script(src='https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js')
+ 
+    //- link(href='https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css' rel='stylesheet')
+    //- script(src='/img/js/mapbox.js')  it will not load the DOM
+
 block content 
     section.section-header 
         .header__hero
@@ -60,6 +70,8 @@ block content
             .picture-box
                 img( src=`/img/tours/${img}`, alt='The Park Camper Tour 1' , class=`picture-box__img--${i+1}`).picture-box__img
 
+    section.section-map  
+        #map(data-locations = `${JSON.stringify(tour.locations)}`)
     section.section-reviews
         .reviews 
             each rev in tour.reviews

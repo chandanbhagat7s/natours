@@ -6,6 +6,7 @@ const userroute = require('./../controllers/usercontrollers')
 const authroute = require('./../controllers/authcontrollers');
 router.route('/signup').post(authroute.signup)
 router.route('/login').post(authroute.login)
+router.route('/logout').get(authroute.logout)
 
 router.route('/forgotPassword').post(authroute.forgotPassword)
 router.route('/').get(authroute.getVerified, userroute.getUser).post(userroute.createUser)

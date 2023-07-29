@@ -1,6 +1,8 @@
 const Tour = require('../models/Tour')
 const runAsync = require('./../util/runAsync')
 
+
+
 exports.getOverview = runAsync(async (req, res, next) => {
     // request for all the tour 
     const tours = await Tour.find()
@@ -26,11 +28,23 @@ exports.getTours = runAsync(async (req, res) => {
 
 
     res.status(200).render('tour', {
-        title: 'the forest hicker',
+        title: tour.name,
         tour
     })
 })
 
+
+exports.getLoginPage = (req, res) => {
+    // request the data using api from DB
+
+    // console.log(tour);
+
+
+
+    res.status(200).render('login', {
+        title: 'chandna'
+    })
+}
 
 
 

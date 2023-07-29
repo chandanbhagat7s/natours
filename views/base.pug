@@ -1,6 +1,7 @@
 doctype html 
 html
     head 
+        block head
         title Natours | #{title}
             //- to use templete string
         meta(charset='UTF-8' )
@@ -17,9 +18,22 @@ html
         //content 
         block content
             h1 this is a placeholder heading
+        //- hear we are extending the block and it will diapper the content wriiten hear 
+        //- acctually we have one more way as it will append okk 
 
         // footer
         include _footer
+        //- we cannot include hear all the files , we must have one big file , and use like module bundler
+        //- 
+        //- A module bundler is a tool that combines multiple JavaScript files into a single file that can be executed in the browser. This is necessary because the browser does not natively support the module system, which is a way of organizing JavaScript code into reusable units.
+        //- script(src='/img/js/mapbox.js')
+        //- script(src='/img/js/login.js')
+
+        //- one file which will contain all the js file and their dependency 
+
+        //- now the main file will be index.js where we can use import the files which we ware adding hear and lode the script functionaly or code okk 
+        script(src='/img/js/bundle.js')
+
 
 
 

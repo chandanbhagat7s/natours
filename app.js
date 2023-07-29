@@ -22,11 +22,15 @@ const tourRoute = require('./Routes/tourroutes')
 const reviewRoute = require('./Routes/reviewroute')
 const viewRoute = require('./Routes/viewroutes')
 
+// to parese all the cookies from incoming request 
+const cookieParser = require('cookie-parser')
+
 
 
 
 // bringing all the function access to app variable 
 const app = express();
+
 
 // for pug , for  dynamic web rendering okk 
 app.set("view engine", "pug");
@@ -35,6 +39,8 @@ app.set('views', path.join(__dirname, 'views'))
 
 // we will learn to server static file ok 
 app.use(express.static(`${__dirname}/public`))
+// by this module and middleware the cookies that we set is sent in all the request(further req..s) , after we get cookie info 
+app.use(cookieParser())
 
 
 
@@ -83,6 +89,7 @@ app.use((req, res, next) => {
 
 
     // }
+    console.log(req.cookies);
     next()
 })
 

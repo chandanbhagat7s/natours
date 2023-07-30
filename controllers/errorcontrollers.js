@@ -36,16 +36,27 @@ const jwttokenexp = () => {
 
 // for dev 
 const indevelopment = (err, res) => {
-    const statuscode = err.statusCode || 500;
-    const status = err.status || 'error';
-    console.log(err.name);
+    // if error starts with /api 
+    if (err.message.startsWith('/api')) {
+        const statuscode = err.statusCode || 500;
+        const status = err.status || 'error';
+        console.log(err.name);
 
-    res.status(statuscode).json({
-        status: status,
-        massage: err.message,
-        error: err,
-        stack: err.stack
-    })
+        res.status(statuscode).json({
+            status: status,
+            massage: err.message,
+            error: err,
+            stack: err.stack
+        })
+
+    } else {
+        res.status(200).render('errorpg', {
+            title: 'ERROR',
+            msg: err.message
+        })
+    }
+
+
 }
 
 // for production 

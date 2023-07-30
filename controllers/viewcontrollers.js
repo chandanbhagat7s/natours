@@ -1,5 +1,6 @@
 const Tour = require('../models/Tour')
 const runAsync = require('./../util/runAsync')
+const appError = require('../util/appError')
 
 
 
@@ -15,7 +16,7 @@ exports.getOverview = runAsync(async (req, res, next) => {
     })
 })
 
-exports.getTours = runAsync(async (req, res) => {
+exports.getTours = runAsync(async (req, res, next) => {
     // request the data using api from DB
     const tour = await Tour.findOne({ slug: req.params.tourname }).populate({
         path: 'reviews',
@@ -24,6 +25,8 @@ exports.getTours = runAsync(async (req, res) => {
 
     })
     // console.log(tour);
+    // if we do not get error 
+    if (!tour) return next(new appError('No such tour with name ', 404));
 
 
 
@@ -46,6 +49,15 @@ exports.getLoginPage = (req, res) => {
     })
 }
 
+
+
+exports.myPage = (req, res) => {
+
+
+    res.status(200).render('account', {
+        title: 'Me'
+    })
+}
 
 
 

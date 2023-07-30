@@ -104,7 +104,8 @@ If the signature of the JWT is valid, the verify() method will return the decode
     }
 
     // future use 
-    req.user = freshUser
+    req.user = freshUser;
+    res.locals.user = freshUser;
 
     next()
 

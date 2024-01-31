@@ -11,7 +11,7 @@ import { updateInfo } from './updateinfo';
 import { call, logout } from './login';
 
 const maps = document.getElementById('map');
-const logins = document.querySelector('.form')
+const logins = document.querySelector('.form-login')
 
 const logsoutt = document.querySelector('.nav__el--logout');
 // run for only when location is Needed
@@ -25,11 +25,36 @@ if (updateinfotag) {
     updateinfotag.addEventListener("submit", function (event) {
         // preventing form from submitting
         event.preventDefault();
-        const id = document.getElementById('name').dataset
-        const name = document.getElementById('name').value
-        const email = document.getElementById('email').value
+        // we Need to send form data 
+        const form = new FormData();
+        form.append('name', document.getElementById('name').value)
+        form.append('email', document.getElementById('email').value)
+        form.append('photo', document.getElementById('photo').files[0])
 
-        updateInfo(name, email, id)
+        // const values = [...form.entries()];
+        // // console.log(values);
+        // const obj = Object.fromEntries(values);
+        // console.log(obj);
+
+        updateInfo(form)
+        // const id = document.getElementById('name').dataset
+        // const apiUrl = 'http://127.0.0.1:3000/api/v1/user/updateMyself'; // Replace with the actual API endpoint
+        // fetch(apiUrl, {
+        //     method: 'PATCH',
+        //     body: form
+        // })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error('Network response was not ok');
+        //         }
+        //         return response.json();
+        //     })
+        //     .then(data => {
+        //         console.log('API response:', data);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //     });
     })
 
 

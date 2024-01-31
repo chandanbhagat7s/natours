@@ -1,18 +1,83 @@
 // bringing hear the model for crud routes 
 
+// for storing images in fs
+const multer = require('multer');
+// for resizing the image
+const sharp = require('sharp');
+
 const Tour = require('./../models/Tour');
 const factory = require('./factory')
-
-// const fs = require('fs');
-// const Tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours.json`))
-
-
 // bringig hear the runAsync method
 const runAsync = require('./../util/runAsync')
 const appError = require('./../util/appError')
 
 // adding hear class 
 const apiFeature = require('./../util/apiFeature')
+
+
+// const fs = require('fs');
+// const Tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours.json`))
+
+
+
+// for tour image processing
+const multerStorage = multer.memoryStorage()
+// now filteration by ony for image as file type 
+const mfilter = (req, file, cb) => {
+    console.log("entred");
+    // if it is image then null with true 
+    if (file.mimetype.startsWith('image')) {
+        cb(null, true)
+    } else {
+        // if not error with false
+        cb(new appError('the file expected hear of image type  ', 400), false)
+
+    }
+}
+
+// now destination : such that file is stored on disk 
+// const uplode = multer({ dest: 'public/img/users' })  // by this we will create a middleware which we can attach to the route wher we Need
+const uplode = multer({
+    storage: multerStorage,
+    fileFilter: mfilter
+})
+
+// we are going to process multiple images with multiple field so creating midleware for this
+exports.uplodeTourImages = uplode.fields([
+    { name: 'imageCover', maxCount: 1 },
+    { name: 'images', maxCount: 3 }
+])
+
+
+
+// for resizing 
+exports.resizeTourImages = runAsync(async (req, res, next) => {
+    // now the files that we uplode is on req.files
+    // console.log(req.files);// it is array of data of file okk 
+    if (!req.files.imageCover || !req.files.images) {
+        next()
+    }
+    req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+    await sharp(req.files.imageCover[0].buffer).resize(2000, 1333).toFormat('jpeg').jpeg({ quality: 90 }).toFile(`public/img/tours/${req.body.imageCover}`)
+
+    // now for imagges
+    req.body.images = []
+    await Promise.all(req.files.images.map(async (el, i) => {
+        // console.log(el);
+        const fileName = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+        await sharp(el.buffer).resize(2000, 1333).toFormat('jpeg').jpeg({ quality: 90 }).toFile(`public/img/tours/${fileName}`);
+        req.body.images.push(fileName)
+    }))
+
+
+
+    next()
+})
+// for single field
+// uplode.array('images',5)
+
+
+
 
 
 

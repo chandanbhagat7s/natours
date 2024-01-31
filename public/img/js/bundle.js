@@ -6759,20 +6759,14 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 var updateInfo = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(name, email, id) {
+  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(obj) {
     var option, p1;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
           option = {
             method: 'PATCH',
-            body: JSON.stringify({
-              name: name,
-              email: email
-            }),
-            headers: {
-              'Content-type': 'application/json; charset=UTF-8'
-            }
+            body: obj
           };
           _context.next = 3;
           return fetch("http://127.0.0.1:3000/api/v1/user/updateMyself", option);
@@ -6791,7 +6785,7 @@ var updateInfo = /*#__PURE__*/function () {
       }
     }, _callee);
   }));
-  return function updateInfo(_x, _x2, _x3) {
+  return function updateInfo(_x) {
     return _ref.apply(this, arguments);
   };
 }();
@@ -7031,7 +7025,7 @@ var _login = require("./login");
 // importing loggin module 
 
 var maps = document.getElementById('map');
-var logins = document.querySelector('.form');
+var logins = document.querySelector('.form-login');
 var logsoutt = document.querySelector('.nav__el--logout');
 // run for only when location is Needed
 
@@ -7042,12 +7036,39 @@ if (updateinfotag) {
   updateinfotag.addEventListener("submit", function (event) {
     // preventing form from submitting
     event.preventDefault();
-    var id = document.getElementById('name').dataset;
-    var name = document.getElementById('name').value;
-    var email = document.getElementById('email').value;
-    (0, _updateinfo.updateInfo)(name, email, id);
+    // we Need to send form data 
+    var form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
+
+    // const values = [...form.entries()];
+    // // console.log(values);
+    // const obj = Object.fromEntries(values);
+    // console.log(obj);
+
+    (0, _updateinfo.updateInfo)(form);
+    // const id = document.getElementById('name').dataset
+    // const apiUrl = 'http://127.0.0.1:3000/api/v1/user/updateMyself'; // Replace with the actual API endpoint
+    // fetch(apiUrl, {
+    //     method: 'PATCH',
+    //     body: form
+    // })
+    //     .then(response => {
+    //         if (!response.ok) {
+    //             throw new Error('Network response was not ok');
+    //         }
+    //         return response.json();
+    //     })
+    //     .then(data => {
+    //         console.log('API response:', data);
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error);
+    //     });
   });
 }
+
 if (maps) {
   var locationv = JSON.parse(maps.dataset.locations);
   (0, _mapbox.map)(locationv);
@@ -7095,7 +7116,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57063" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55589" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
@@ -7240,4 +7261,4 @@ function hmrAcceptRun(bundle, id) {
   }
 }
 },{}]},{},["../../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.js"], null)
-//# sourceMappingURL=img/js/bundle.js.map
+//# sourceMappingURL=bundle.js.map

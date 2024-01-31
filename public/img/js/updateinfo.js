@@ -1,17 +1,12 @@
 import { showAlert } from './alert';
 
-export const updateInfo = async (name, email, id) => {
+export const updateInfo = async (obj) => {
 
 
     let option = {
         method: 'PATCH',
-        body: JSON.stringify({
-            name,
-            email
-        }),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-        }
+        body: obj,
+
     }
 
     let p1 = await fetch(`http://127.0.0.1:3000/api/v1/user/updateMyself`, option)

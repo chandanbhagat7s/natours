@@ -37,7 +37,7 @@ const jwttokenexp = () => {
 // for dev 
 const indevelopment = (err, res) => {
     // if error starts with /api 
-    if (err.message.startsWith('/api')) {
+    if (true) {
         const statuscode = err.statusCode || 500;
         const status = err.status || 'error';
         console.log(err.name);

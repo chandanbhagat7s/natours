@@ -7,9 +7,9 @@ const { promisify } = require('util');
 
 const crypto = require('crypto');
 // importing email
-const sendEmail = require('./../util/email')
+// const sendEmail = require('./../util/email')
 const url = require('url');
-
+const Email = require('./../util/email');
 
 
 
@@ -165,10 +165,13 @@ exports.signup = runAsync(async (req, res, next) => {
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
-        photo: req.body.photo || '',
+        photo: req.body.photo || 'default.jpg',
         role: req.body.role
 
     })
+    const url = `${req.protocol}://${req.get('host')}/api/v1/user/getMe`
+    // console.log(url);
+    await new Email(newUser, url).sendWelcome();
     sendTokenResponse(newUser, 201, res)
     // const token = createToken(newUser._id,)
 
@@ -201,7 +204,7 @@ exports.login = runAsync(async (req, res, next) => {
     let userpass = await User.findOne({ email }).select('+password').setOptions(options)
     //commented so if failed to know the email then this fun.. will create problem..
     // const cmpred = await User.correctPass(password, userpass) 
-    console.log(userpass.email);
+    // console.log(userpass.email);
 
 
     if (!userpass || !(await userpass.correctPass(password, userpass.password))) {//401 : unauthorized user
@@ -284,11 +287,11 @@ exports.forgotPassword = runAsync(async (req, res, next) => {
     // in try catch block because : if we fail to send email then we need to revert the changes okk 
     try {
         // now sending email(async)
-        await sendEmail({
-            email: user.email,
-            subject: 'your password reset token valid for 10 min',
-            text: massage
-        })
+        // await sendEmail({
+        //     email: user.email,
+        //     subject: 'your password reset token valid for 10 min',
+        //     text: massage
+        // })
 
         // we do not send url in response just anyone can send and get it in response so we send it to email okkk 
 

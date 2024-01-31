@@ -18,6 +18,7 @@ exports.getOverview = runAsync(async (req, res, next) => {
 
 exports.getTours = runAsync(async (req, res, next) => {
     // request the data using api from DB
+    console.log(req.params);
     const tour = await Tour.findOne({ slug: req.params.tourname }).populate({
         path: 'reviews',
         fields: 'review byUser'

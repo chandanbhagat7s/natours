@@ -19,7 +19,7 @@ router.route('/busy/:year').get(tourroutes.busymonth);
 
 router.use(authroutes.getVerified, authroutes.getaccess('admin'))
 router.route('/').get(tourroutes.getTour).post(tourroutes.createTour)
-router.route('/:id').get(tourroutes.getTourById).patch(tourroutes.updateTourById).delete(authroutes.getVerified, authroutes.getaccess('admin', 'head'), tourroutes.deleteTourById)
+router.route('/:id').get(tourroutes.getTourById).patch(tourroutes.uplodeTourImages, tourroutes.resizeTourImages, tourroutes.updateTourById).delete(authroutes.getVerified, authroutes.getaccess('admin', 'head'), tourroutes.deleteTourById)
 
 // implementing as user base : authoriztion for deletion of tour routes only by admin 
 

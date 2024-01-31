@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router()
 
+
+
+
 const userroute = require('./../controllers/usercontrollers')
 // bringing hear the authcontroller
 const authroute = require('./../controllers/authcontrollers');
@@ -16,7 +19,8 @@ router.use(authroute.getVerified)
 router.route('/getMe').get(userroute.getMe, userroute.getUserById)
 router.route('/resetPassword/:token').patch(authroute.resetPassword)
 router.route('/updatePassword').patch(authroute.updatePassword)
-router.route('/updateMyself').patch(userroute.updateMyself)
+// uplode.single  for single image , passing the field name in form  which is going to hold data value
+router.route('/updateMyself').patch(userroute.uplodeSinglePhoto, userroute.resizeImage, userroute.updateMyself)
 router.route('/deleteMyself').delete(userroute.deleteMyself)
 
 
